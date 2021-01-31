@@ -104,6 +104,8 @@ class CrimeFragment private constructor() : Fragment() {
         }
     }
 
-
-
+    override fun onStop() {
+        super.onStop()
+        crimeDetailViewModel.saveCrime(crime)
+    }
 }

@@ -7,6 +7,8 @@ import com.hasan.foraty.criminalintent.database.CrimeDao
 import com.hasan.foraty.criminalintent.database.CrimeDatabase
 import com.hasan.foraty.criminalintent.model.Crime
 import java.util.*
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 private const val DATABASE_NAME = "crime-database"
 class CrimeRepository private constructor(context:Context){
@@ -23,7 +25,7 @@ class CrimeRepository private constructor(context:Context){
             throw IllegalStateException("CrimeRepository must be initialized")
         }
     }
-
+    private val executors=Executors.newSingleThreadExecutor()
     private val database:CrimeDatabase= Room.databaseBuilder(
             context.applicationContext,
             CrimeDatabase::class.java,
@@ -33,4 +35,14 @@ class CrimeRepository private constructor(context:Context){
 
     fun getCrimes():LiveData<List<Crime>> =crimeDao.getCrimes()
     fun getCrime(id:UUID):LiveData<Crime?> = crimeDao.getCrime(id)
+    fun updateCrime(crime:Crime){
+        executors.execute {
+            crimeDao.updateCrime(crime)
+        }
+    }
+    fun addCrime(crime: Crime){
+        executors.execute {
+            crimeDao.addCrime(crime)
+        }
+    }
 }
