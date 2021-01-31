@@ -55,13 +55,24 @@ class CrimeFragment private constructor() : Fragment() {
         titleField = view.findViewById(R.id.crime_title)
         dateButton = view.findViewById(R.id.crime_date)
         solvedCheckBox=view.findViewById(R.id.crime_solved)
-        crimeDetailViewModel.crimeLiveData.observe(viewLifecycleOwner,{crime ->
-            titleField.setText(crime?.title)
-            dateButton.text = crime?.date.toString()
-            solvedCheckBox.isChecked= crime?.isSolved == true
-        })
+
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        crimeDetailViewModel.crimeLiveData.observe(viewLifecycleOwner,{crime ->
+            crime?.let {
+                this.crime=crime
+                updateUI()
+            }
+        })
+    }
+    fun updateUI(){
+        titleField.setText(crime.title)
+        dateButton.text = crime.date.toString()
+        solvedCheckBox.isChecked= crime.isSolved == true
     }
 
     override fun onStart() {
@@ -89,4 +100,7 @@ class CrimeFragment private constructor() : Fragment() {
             }
         }
     }
+
+
+
 }
