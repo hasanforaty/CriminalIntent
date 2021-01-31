@@ -72,7 +72,10 @@ class CrimeFragment private constructor() : Fragment() {
     fun updateUI(){
         titleField.setText(crime.title)
         dateButton.text = crime.date.toString()
-        solvedCheckBox.isChecked= crime.isSolved == true
+        solvedCheckBox.apply {
+            isChecked=crime.isSolved
+            jumpDrawablesToCurrentState()
+        }
     }
 
     override fun onStart() {
