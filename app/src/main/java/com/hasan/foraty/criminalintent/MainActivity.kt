@@ -22,10 +22,11 @@ class MainActivity : AppCompatActivity()
     }
 
     override fun onCrimeSelected(id: UUID) {
-        val fragment=CrimeFragment()
+        val fragment=CrimeFragment.newInstance(id)
         supportFragmentManager
                 .beginTransaction()
                 .replace(R.id.fragment_container,fragment)
+                .addToBackStack(null)
                 .commit()
     }
 
