@@ -16,7 +16,9 @@ import com.hasan.foraty.criminalintent.model.Crime
 import com.hasan.foraty.criminalintent.model.CrimeDetailViewModel
 import java.util.*
 private const val ART_CRIME_ID="crime_id"
-class CrimeFragment private constructor() : Fragment() {
+private const val DIALOG_DATE="DialogDate"
+private const val REQUEST_DATE=0
+class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callbacks {
 
     private lateinit var crime:Crime
     private lateinit var titleField:EditText
@@ -93,10 +95,13 @@ class CrimeFragment private constructor() : Fragment() {
         }
         titleField.addTextChangedListener(titleWatcher)
 
-        dateButton.apply {
-            text=crime.date.toString()
-            isEnabled=false
+        dateButton.setOnClickListener {
+            DatePickerFragment.newInstance(crime.date).apply {
+                setTargetFragment(this@CrimeFragment, REQUEST_DATE)
+                show(this@CrimeFragment.requireFragmentManager(), DIALOG_DATE)
+            }
         }
+
         solvedCheckBox.apply {
             setOnCheckedChangeListener { buttonView, isChecked ->
                 crime.isSolved = isChecked
@@ -107,5 +112,10 @@ class CrimeFragment private constructor() : Fragment() {
     override fun onStop() {
         super.onStop()
         crimeDetailViewModel.saveCrime(crime)
+    }
+
+    override fun onDateSelected(date: Date) {
+        crime.date=date
+        updateUI()
     }
 }
