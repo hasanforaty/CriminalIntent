@@ -5,5 +5,6 @@
     <string name="crime_title_label">Title</string>
     <string name="crime_detail_label">Details</string>
     <string name="crime_solved_label">Solved</string>
+    <string name="time_picker">Pick time of Crime</string>
 
 </resources>
