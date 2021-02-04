@@ -87,9 +87,6 @@ class CrimeListFragment : Fragment() {
                 val crime=Crime()
                 crimeListViewModel.addCrime(crime)
                 callbacks?.onCrimeSelected(crime.id)
-                if (crime.title.isEmpty()){
-
-                }
                 true
             }
             else->super.onOptionsItemSelected(item)
