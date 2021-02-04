@@ -48,4 +48,9 @@ class CrimeRepository private constructor(context:Context){
             }
         }
     }
+    fun deleteCrime(crime: Crime){
+        executors.execute {
+                crimeDao.deleteCrime(crime)
+        }
+    }
 }

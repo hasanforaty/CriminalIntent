@@ -46,6 +46,7 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         crime=Crime()
         val crimeId:UUID=arguments?.getSerializable(ART_CRIME_ID) as UUID
         crimeDetailViewModel.loadCrime(crimeId)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -113,6 +114,20 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         crimeDetailViewModel.saveCrime(crime)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime,menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.delete_crime->{
+                crimeDetailViewModel.deleteCrime(crime)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     private fun updateUI(){
         titleField.setText(crime.title)

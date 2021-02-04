@@ -7,5 +7,6 @@
     <string name="crime_solved_label">Solved</string>
     <string name="time_picker">Pick time of Crime</string>
     <string name="new_crime">New Crime</string>
+    <string name="delete_crime">Delete Crime</string>
 
 </resources>

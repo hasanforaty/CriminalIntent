@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity()
                     .add(R.id.fragment_container,fragment)
                     .commit()
         }
+
     }
 
     override fun onCrimeSelected(id: UUID) {
