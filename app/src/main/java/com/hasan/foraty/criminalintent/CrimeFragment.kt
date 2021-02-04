@@ -4,9 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -42,8 +40,6 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
             }
         }
     }
-    
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +47,6 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         val crimeId:UUID=arguments?.getSerializable(ART_CRIME_ID) as UUID
         crimeDetailViewModel.loadCrime(crimeId)
     }
-
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -75,14 +70,6 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
                 updateUI()
             }
         })
-    }
-    fun updateUI(){
-        titleField.setText(crime.title)
-        dateButton.text = crime.date.toString()
-        solvedCheckBox.apply {
-            isChecked=crime.isSolved
-            jumpDrawablesToCurrentState()
-        }
     }
 
     override fun onStart() {
@@ -126,6 +113,15 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         crimeDetailViewModel.saveCrime(crime)
     }
 
+
+    private fun updateUI(){
+        titleField.setText(crime.title)
+        dateButton.text = crime.date.toString()
+        solvedCheckBox.apply {
+            isChecked=crime.isSolved
+            jumpDrawablesToCurrentState()
+        }
+    }
     override fun onDateSelected(date: Date) {
         crime.date=date
         updateUI()

@@ -25,6 +25,7 @@ class CrimeRepository private constructor(context:Context){
             throw IllegalStateException("CrimeRepository must be initialized")
         }
     }
+
     private val executors=Executors.newSingleThreadExecutor()
     private val database:CrimeDatabase= Room.databaseBuilder(
             context.applicationContext,
@@ -42,7 +43,9 @@ class CrimeRepository private constructor(context:Context){
     }
     fun addCrime(crime: Crime){
         executors.execute {
-            crimeDao.addCrime(crime)
+            if (crime.title.isNotEmpty()){
+                crimeDao.addCrime(crime)
+            }
         }
     }
 }
