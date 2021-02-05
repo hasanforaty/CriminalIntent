@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.hasan.foraty.criminalintent.database.CrimeDao
 import com.hasan.foraty.criminalintent.database.CrimeDatabase
+import com.hasan.foraty.criminalintent.database.migration_1_2
 import com.hasan.foraty.criminalintent.model.Crime
 import java.util.*
 import java.util.concurrent.Executor
@@ -27,11 +28,12 @@ class CrimeRepository private constructor(context:Context){
     }
 
     private val executors=Executors.newSingleThreadExecutor()
+
     private val database:CrimeDatabase= Room.databaseBuilder(
             context.applicationContext,
             CrimeDatabase::class.java,
             DATABASE_NAME
-    ).build()
+    ).addMigrations(migration_1_2).build()
     private val crimeDao=database.crimeDao()
 
     fun getCrimes():LiveData<List<Crime>> =crimeDao.getCrimes()
@@ -43,9 +45,7 @@ class CrimeRepository private constructor(context:Context){
     }
     fun addCrime(crime: Crime){
         executors.execute {
-            if (crime.title.isNotEmpty()){
                 crimeDao.addCrime(crime)
-            }
         }
     }
     fun deleteCrime(crime: Crime){

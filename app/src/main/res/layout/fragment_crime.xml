@@ -53,6 +53,18 @@
             android:layout_height="wrap_content"
             android:text="@string/crime_solved_label" />
 
+        <Button
+            android:id="@+id/choose_suspect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_suspect_button" />
+
+        <Button
+            android:id="@+id/send_report"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/send_report_button" />
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

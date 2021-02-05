@@ -1,9 +1,11 @@
 package com.hasan.foraty.criminalintent
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.CheckBox
@@ -13,12 +15,14 @@ import androidx.lifecycle.ViewModelProviders
 import com.hasan.foraty.criminalintent.model.Crime
 import com.hasan.foraty.criminalintent.model.CrimeDetailViewModel
 import com.hasan.foraty.criminalintent.model.TimePickerFragment
+import java.text.DateFormat
 import java.util.*
 private const val ART_CRIME_ID="crime_id"
 private const val DIALOG_DATE="DialogDate"
 private const val DIALOG_TIME="DialogTime"
 private const val REQUEST_DATE=0
 private const val REQUEST_TIME=0
+private const val DATE_FORMAT="EEE,MMM,dd,yyy"
 class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.Callback {
 
     private lateinit var crime:Crime
@@ -26,6 +30,8 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
     private lateinit var dateButton:Button
     private lateinit var solvedCheckBox: CheckBox
     private lateinit var timePickerButton: Button
+    private lateinit var chooseSuspectButton: Button
+    private lateinit var sendReportButton: Button
     private val crimeDetailViewModel:CrimeDetailViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
     }
@@ -58,6 +64,8 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         dateButton = view.findViewById(R.id.crime_date)
         solvedCheckBox=view.findViewById(R.id.crime_solved)
         timePickerButton=view.findViewById(R.id.crime_time)
+        chooseSuspectButton=view.findViewById(R.id.choose_suspect)
+        sendReportButton=view.findViewById(R.id.send_report)
 
 
         return view
@@ -100,18 +108,31 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
                 show(this@CrimeFragment.requireFragmentManager(), DIALOG_TIME)
             }
         }
-
-
         solvedCheckBox.apply {
             setOnCheckedChangeListener { buttonView, isChecked ->
                 crime.isSolved = isChecked
+            }
+        }
+        sendReportButton.setOnClickListener {
+            Intent(Intent.ACTION_SEND).apply {
+                type="text/plain"
+                putExtra(Intent.EXTRA_TEXT,getCrimeReport())
+                putExtra(Intent.EXTRA_SUBJECT,
+                getString(R.string.crime_report_subject))
+            }.also {intent ->
+                startActivity(intent)
             }
         }
     }
 
     override fun onStop() {
         super.onStop()
-        crimeDetailViewModel.saveCrime(crime)
+        if (crime.title.isNotBlank()){
+            crimeDetailViewModel.saveCrime(crime)
+        }else{
+            crimeDetailViewModel.deleteCrime(crime)
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -145,6 +166,25 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
     override fun onTimeSelected(date: Date) {
         crime.date=date
         updateUI()
+    }
+
+    private fun getCrimeReport():String{
+        val solvedString=if (crime.isSolved){
+            getString(R.string.crime_report_solved)
+        }else{
+            getString(R.string.crime_report_unsolved)
+        }
+        val dateString=android.text.format.DateFormat.format(DATE_FORMAT,crime.date)
+        val suspectString=if (crime.suspect.isBlank()){
+            getString(R.string.crime_report_no_suspect)
+        }else{
+            getString(R.string.crime_report_suspect,crime.suspect)
+        }
+        return getString(R.string.crime_report,
+                        crime.title,
+                        dateString,
+                        solvedString,
+                        suspectString)
     }
 
 }

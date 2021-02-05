@@ -37,6 +37,14 @@ class CrimeListFragment : Fragment() {
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
 
+    override fun onStart() {
+        emptyListAddButton.setOnClickListener {
+            openAddCrime()
+        }
+        super.onStart()
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,11 +59,6 @@ class CrimeListFragment : Fragment() {
         emptyListTextView=view.findViewById(R.id.emptyListText)
         emptyListAddButton=view.findViewById(R.id.empty_add_crime)
 
-        val crimes=crimeListViewModel.crimeLiveList.value
-        makeVisible(crimes.isNullOrEmpty())
-        emptyListAddButton.setOnClickListener {
-            openAddCrime()
-        }
 
 
         return view
@@ -165,6 +168,7 @@ class CrimeListFragment : Fragment() {
     }
 
     private fun updateUI(crimes:List<Crime>){
+        makeVisible(crimes.isNullOrEmpty())
         adapter=CrimeAdapter(crimes,diffUtilCallbacks)
         crimeRecycleView.adapter=adapter
     }
