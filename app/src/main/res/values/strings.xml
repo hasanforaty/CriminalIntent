@@ -8,5 +8,7 @@
     <string name="time_picker">Pick time of Crime</string>
     <string name="new_crime">New Crime</string>
     <string name="delete_crime">Delete Crime</string>
+    <string name="empty_list_text">There are no crimes</string>
+    <string name="empty_list_add">add a Crime</string>
 
 </resources>

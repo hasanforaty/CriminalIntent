@@ -2,8 +2,10 @@ package com.hasan.foraty.criminalintent
 
 import android.content.Context
 import android.os.Bundle
+import android.transition.Visibility
 import android.util.Log
 import android.view.*
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -29,6 +31,8 @@ class CrimeListFragment : Fragment() {
     private lateinit var crimeRecycleView : RecyclerView
     private val diffUtilCallbacks= DiffUtilCallback()
     private var adapter : CrimeAdapter=CrimeAdapter(emptyList(),diffUtilCallbacks)
+    private lateinit var emptyListTextView: TextView
+    private lateinit var emptyListAddButton: Button
     private val crimeListViewModel:CrimeListViewModel by lazy{
         ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
     }
@@ -41,8 +45,18 @@ class CrimeListFragment : Fragment() {
         val view=inflater.inflate(R.layout.fragment_crime_list,container,false)
 
         crimeRecycleView=view.findViewById(R.id.crime_recycle_view)
+
         crimeRecycleView.layoutManager=LinearLayoutManager(context)
         crimeRecycleView.adapter=adapter
+        emptyListTextView=view.findViewById(R.id.emptyListText)
+        emptyListAddButton=view.findViewById(R.id.empty_add_crime)
+
+        val crimes=crimeListViewModel.crimeLiveList.value
+        makeVisible(crimes.isNullOrEmpty())
+        emptyListAddButton.setOnClickListener {
+            openAddCrime()
+        }
+
 
         return view
     }
@@ -57,6 +71,7 @@ class CrimeListFragment : Fragment() {
 
                     }
                 })
+
     }
 
     override fun onAttach(context: Context) {
@@ -84,9 +99,7 @@ class CrimeListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.new_crime ->{
-                val crime=Crime()
-                crimeListViewModel.addCrime(crime)
-                callbacks?.onCrimeSelected(crime.id)
+                openAddCrime()
                 true
             }
             else->super.onOptionsItemSelected(item)
@@ -162,4 +175,18 @@ class CrimeListFragment : Fragment() {
         }
     }
 
+    private fun makeVisible(makeVisible:Boolean){
+        if (makeVisible){
+            emptyListTextView.visibility=View.VISIBLE
+            emptyListAddButton.visibility=View.VISIBLE
+        }else{
+            emptyListTextView.visibility=View.GONE
+            emptyListAddButton.visibility=View.GONE
+        }
+    }
+    private fun openAddCrime(){
+        val crime=Crime()
+        crimeListViewModel.addCrime(crime)
+        callbacks?.onCrimeSelected(crime.id)
+    }
 }
