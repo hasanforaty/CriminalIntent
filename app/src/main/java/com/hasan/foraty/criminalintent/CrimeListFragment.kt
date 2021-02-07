@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hasan.foraty.criminalintent.model.Crime
 import com.hasan.foraty.criminalintent.model.CrimeListViewModel
 import java.util.*
+import kotlin.collections.ArrayList
 
 private const val TAG="CrimeListFragment"
 class CrimeListFragment : Fragment() {
@@ -30,7 +31,7 @@ class CrimeListFragment : Fragment() {
     private var callbacks:Callbacks?=null
     private lateinit var crimeRecycleView : RecyclerView
     private val diffUtilCallbacks= DiffUtilCallback()
-    private var adapter : CrimeAdapter=CrimeAdapter(emptyList(),diffUtilCallbacks)
+    private var adapter : CrimeAdapter=CrimeAdapter(diffUtilCallbacks)
     private lateinit var emptyListTextView: TextView
     private lateinit var emptyListAddButton: Button
     private val crimeListViewModel:CrimeListViewModel by lazy{
@@ -71,7 +72,6 @@ class CrimeListFragment : Fragment() {
                 { crimes->
                     crimes?.let {
                         updateUI(crimes)
-
                     }
                 })
 
@@ -148,8 +148,9 @@ class CrimeListFragment : Fragment() {
         }
     }
 
-    private inner class CrimeAdapter(var crimes : List<Crime>, diffCallback :DiffUtil.ItemCallback<Crime>) :
-            RecyclerView.Adapter<CrimeHolder>() {
+
+    private inner class CrimeAdapter(diffCallback :DiffUtil.ItemCallback<Crime>) :
+            ListAdapter<Crime,CrimeHolder>(diffCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val view =layoutInflater.inflate(R.layout.list_item_crime,parent,false)
@@ -157,20 +158,15 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-            val crime = crimes[position]
-
+            val crime = getItem(position)
             holder.binding(crime)
-        }
-        override fun getItemCount(): Int {
-           return crimes.size
         }
 
     }
 
     private fun updateUI(crimes:List<Crime>){
         makeVisible(crimes.isNullOrEmpty())
-        adapter=CrimeAdapter(crimes,diffUtilCallbacks)
-        crimeRecycleView.adapter=adapter
+        adapter.submitList(crimes)
     }
 
     companion object{
