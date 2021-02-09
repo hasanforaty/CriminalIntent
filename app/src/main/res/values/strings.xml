@@ -10,6 +10,8 @@
     <string name="delete_crime">Delete Crime</string>
     <string name="empty_list_text">There are no crimes</string>
     <string name="empty_list_add">add a Crime</string>
+    <string name="call_suspect">Calling Suspect</string>
+    <string name="call_suspect_permission_aware">(need contact permission)</string>
     
     <string name="choose_suspect_button">Choose Suspect</string>
     <string name="send_report_button">Send Crime Report</string>
@@ -23,6 +25,11 @@
     <string name="crime_report_suspect">the suspect is %s.</string>
     <string name="crime_report_subject">CriminalIntent Crime Report</string>
     <string name="send_report">Send crime report via</string>
-    
+
+    <string name="contact_permission_granted">permission to contact is granted</string>
+    <string name="contact_permission_title">Contact Permission</string>
+    <string name="contact_permission_message">need to access to contact for dial</string>
+    <string name="permission_ok">Ok</string>
+    <string name="permission_denied">Cancel</string>
 
 </resources>

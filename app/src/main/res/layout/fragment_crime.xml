@@ -65,6 +65,14 @@
             android:layout_height="wrap_content"
             android:text="@string/send_report_button" />
 
+        <Button
+            android:id="@+id/call_suspect"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/call_suspect_permission_aware"
+            android:text="@string/call_suspect"
+            android:visibility="gone" />
+
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
