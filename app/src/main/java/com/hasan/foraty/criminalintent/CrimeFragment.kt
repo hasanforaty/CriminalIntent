@@ -9,16 +9,15 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
 import android.webkit.PermissionRequest
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.hasan.foraty.criminalintent.dialog.PermissionFragment
@@ -26,6 +25,7 @@ import com.hasan.foraty.criminalintent.model.Crime
 import com.hasan.foraty.criminalintent.model.CrimeDetailViewModel
 import com.hasan.foraty.criminalintent.model.PermissionMassage
 import com.hasan.foraty.criminalintent.model.TimePickerFragment
+import java.io.File
 import java.net.URI
 import java.security.Permission
 import java.security.PermissionCollection
@@ -39,6 +39,7 @@ private const val DIALOG_TIME="DialogTime"
 private const val REQUEST_DATE=0
 private const val REQUEST_TIME=0
 private const val REQUEST_CONTACT=1
+private const val REQUEST_PHOTO=3
 private const val DATE_FORMAT="EEE,MMM,dd,yyy"
 private const val REQUEST_PERMISSION_CONTACT="0"
 private const val REQUEST_CONTACT_DETAIL=2
@@ -52,7 +53,11 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
     private lateinit var chooseSuspectButton: Button
     private lateinit var sendReportButton: Button
     private lateinit var callSuspectButton: Button
+    private lateinit var crimeCamera:ImageButton
+    private lateinit var crimePhoto:ImageView
     private lateinit var permissionMassageContact:PermissionMassage
+    private lateinit var photoFile:File
+    private lateinit var photoUri:Uri
     private val crimeDetailViewModel:CrimeDetailViewModel by lazy {
         ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
     }
@@ -89,6 +94,8 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         chooseSuspectButton=view.findViewById(R.id.choose_suspect)
         sendReportButton=view.findViewById(R.id.send_report)
         callSuspectButton=view.findViewById(R.id.call_suspect)
+        crimeCamera=view.findViewById(R.id.crime_camera)
+        crimePhoto=view.findViewById(R.id.crime_photo)
 
 
         return view
@@ -99,6 +106,10 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         crimeDetailViewModel.crimeLiveData.observe(viewLifecycleOwner,{crime ->
             crime?.let {
                 this.crime=crime
+                photoFile=crimeDetailViewModel.getPhotoFile(crime)
+                photoUri=FileProvider.getUriForFile(requireContext()
+                        ,"come.hasan.foraty.criminalIntent.provider",
+                        photoFile)
                 updateUI()
             }
         })
@@ -165,7 +176,38 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
             }
         }
 
+        crimeCamera.apply {
+            val packageManager =requireActivity().packageManager
+            val captureImage=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val resolvedActivity:ResolveInfo?=packageManager
+                    .resolveActivity(captureImage,PackageManager.MATCH_DEFAULT_ONLY)
+            if (resolvedActivity==null){
+                isEnabled=false
+            }
+            setOnClickListener {
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT,photoUri)
+                val cameraActivates : List<ResolveInfo> = packageManager
+                        .queryIntentActivities(captureImage,PackageManager.MATCH_DEFAULT_ONLY)
+                for (cameraActivity in cameraActivates){
+                    requireActivity().grantUriPermission(
+                            cameraActivity.activityInfo.packageName,
+                            photoUri,
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                }
+                startActivityForResult(captureImage, REQUEST_PHOTO)
+            }
+        }
     }
+
+    private fun updatePhotoView(){
+        if (photoFile.exists()){
+            val bitmap= getScaledBitmap(photoFile.path,requireActivity())
+            crimePhoto.setImageBitmap(bitmap)
+        }else{
+         crimePhoto.setImageDrawable(null)
+        }
+    }
+
     private fun callingSuspect(){
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
             if (requireContext().checkSelfPermission
@@ -246,6 +288,10 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
                     chooseSuspectButton.text=suspect
                 }
             }
+            requestCode== REQUEST_PHOTO ->{
+                updatePhotoView()
+                revokeCameraPermission()
+            }
         }
     }
 
@@ -287,6 +333,7 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
             chooseSuspectButton.text=crime.suspect
             callSuspectButton.visibility=View.VISIBLE
         }
+        updatePhotoView()
     }
     override fun onDateSelected(date: Date) {
         crime.date=date
@@ -321,4 +368,13 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         showContactPermission()
     }
 
+    override fun onDetach() {
+        revokeCameraPermission()
+        super.onDetach()
+    }
+
+    private fun revokeCameraPermission(){
+        requireActivity()
+                .revokeUriPermission(photoUri,Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+    }
 }

@@ -7,6 +7,7 @@ import com.hasan.foraty.criminalintent.database.CrimeDao
 import com.hasan.foraty.criminalintent.database.CrimeDatabase
 import com.hasan.foraty.criminalintent.database.migration_1_2
 import com.hasan.foraty.criminalintent.model.Crime
+import java.io.File
 import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -28,6 +29,7 @@ class CrimeRepository private constructor(context:Context){
     }
 
     private val executors=Executors.newSingleThreadExecutor()
+    private val fileDir=context.applicationContext.filesDir
 
     private val database:CrimeDatabase= Room.databaseBuilder(
             context.applicationContext,
@@ -53,4 +55,5 @@ class CrimeRepository private constructor(context:Context){
                 crimeDao.deleteCrime(crime)
         }
     }
+    fun getPhotoFile(crime: Crime):File=File(fileDir,crime.photoFileName)
 }
