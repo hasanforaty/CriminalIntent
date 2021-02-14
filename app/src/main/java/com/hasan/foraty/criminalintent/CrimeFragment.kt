@@ -97,7 +97,6 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
         crimeCamera=view.findViewById(R.id.crime_camera)
         crimePhoto=view.findViewById(R.id.crime_photo)
 
-
         return view
     }
 
@@ -110,6 +109,9 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
                 photoUri=FileProvider.getUriForFile(requireContext()
                         ,"come.hasan.foraty.criminalIntent.provider",
                         photoFile)
+                crimePhoto.viewTreeObserver.addOnGlobalLayoutListener {
+                    updatePhotoView()
+                }
                 updateUI()
             }
         })
@@ -201,7 +203,7 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
 
     private fun updatePhotoView(){
         if (photoFile.exists()){
-            val bitmap= getScaledBitmap(photoFile.path,requireActivity())
+            val bitmap= getScaledBitmap(photoFile.path,crimePhoto.measuredWidth,crimePhoto.measuredHeight)
             crimePhoto.setImageBitmap(bitmap)
         }else{
          crimePhoto.setImageDrawable(null)
@@ -333,7 +335,6 @@ class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callba
             chooseSuspectButton.text=crime.suspect
             callSuspectButton.visibility=View.VISIBLE
         }
-        updatePhotoView()
     }
     override fun onDateSelected(date: Date) {
         crime.date=date
