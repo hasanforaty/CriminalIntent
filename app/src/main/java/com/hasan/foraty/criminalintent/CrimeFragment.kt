@@ -43,7 +43,7 @@ private const val REQUEST_PHOTO=3
 private const val DATE_FORMAT="EEE,MMM,dd,yyy"
 private const val REQUEST_PERMISSION_CONTACT="0"
 private const val REQUEST_CONTACT_DETAIL=2
-class CrimeFragment private constructor() : Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.Callback,PermissionFragment.callback {
+class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.Callback,PermissionFragment.callback {
 
     private lateinit var crime:Crime
     private lateinit var titleField:EditText

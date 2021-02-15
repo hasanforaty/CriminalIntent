@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">کریمینال اینتنت</string>
+
+    <string name="crime_title_hint">سرفصلی برای جرم انتخاب کن</string>
+    <string name="crime_title_label">سرفصل</string>
+    <string name="crime_detail_label">توضیحات</string>
+    <string name="crime_solved_label">حل شده </string>
+    <string name="time_picker">زمان جرم رو مشخص کن</string>
+    <string name="new_crime">جرم جدید</string>
+    <string name="delete_crime">پاک کردن جرم</string>
+    <string name="empty_list_text">جرمی وجود ندارد</string>
+    <string name="empty_list_add">اضافه کردن جرم</string>
+    <string name="call_suspect">تماس گرفتن با مضنون</string>
+    <string name="call_suspect_permission_aware">(نیاز به اجازه به اتصال به contact است )</string>
+
+    <string name="choose_suspect_button">مضنون رو انتخاب کن</string>
+    <string name="send_report_button">ارسال گزارش جرم</string>
+
+    <string name="crime_report">%1$s!
+        The Crime was discovered on %2$s. %3$s, and %4$s
+    </string>
+    <string name="crime_report_solved">The case is solved</string>
+    <string name="crime_report_unsolved">The case is not solved</string>
+    <string name="crime_report_no_suspect">there is no suspect.</string>
+    <string name="crime_report_suspect">the suspect is %s.</string>
+    <string name="crime_report_subject">CriminalIntent Crime Report</string>
+    <string name="send_report">Send crime report via</string>
+
+    <string name="permission_ok">باشه</string>
+    <string name="permission_denied">نه</string>
+
+</resources>
