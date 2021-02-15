@@ -1,7 +1,6 @@
 package com.hasan.foraty.criminalintent
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
@@ -12,26 +11,20 @@ import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.*
-import android.webkit.PermissionRequest
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.hasan.foraty.criminalintent.dialog.PermissionFragment
+import com.hasan.foraty.criminalintent.dialog.PictureDialogFragment
 import com.hasan.foraty.criminalintent.model.Crime
 import com.hasan.foraty.criminalintent.model.CrimeDetailViewModel
 import com.hasan.foraty.criminalintent.model.PermissionMassage
 import com.hasan.foraty.criminalintent.model.TimePickerFragment
 import java.io.File
-import java.net.URI
-import java.security.Permission
-import java.security.PermissionCollection
-import java.text.DateFormat
 import java.util.*
-import java.util.jar.Manifest
 
 private const val ART_CRIME_ID="crime_id"
 private const val DIALOG_DATE="DialogDate"
@@ -43,7 +36,8 @@ private const val REQUEST_PHOTO=3
 private const val DATE_FORMAT="EEE,MMM,dd,yyy"
 private const val REQUEST_PERMISSION_CONTACT="0"
 private const val REQUEST_CONTACT_DETAIL=2
-class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.Callback,PermissionFragment.callback {
+private const val DIALOG_PICTURE=4
+class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.Callback,PermissionFragment.callback,PictureDialogFragment.Callback {
 
     private lateinit var crime:Crime
     private lateinit var titleField:EditText
@@ -198,6 +192,12 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
                 }
                 startActivityForResult(captureImage, REQUEST_PHOTO)
             }
+        }
+
+        crimePhoto.setOnClickListener {
+            PictureDialogFragment().apply {
+                setTargetFragment(this@CrimeFragment, DIALOG_PICTURE)
+            }.show(requireFragmentManager(), DIALOG_PICTURE.toString())
         }
     }
 
@@ -378,4 +378,9 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
         requireActivity()
                 .revokeUriPermission(photoUri,Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
+
+    override fun getPicture(): String {
+        return photoFile.path
+    }
+
 }
