@@ -17,6 +17,7 @@ import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import com.hasan.foraty.criminalintent.dialog.PermissionFragment
 import com.hasan.foraty.criminalintent.dialog.PictureDialogFragment
@@ -54,7 +55,8 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
     private lateinit var photoFile:File
     private lateinit var photoUri:Uri
     private val crimeDetailViewModel:CrimeDetailViewModel by lazy {
-        ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
+//        ViewModelProviders.of(this).get(CrimeDetailViewModel::class.java)
+        ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
     }
 
     companion object{
@@ -317,10 +319,7 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
         super.onStop()
         if (crime.title.isNotBlank()){
             crimeDetailViewModel.saveCrime(crime)
-        }else{
-            crimeDetailViewModel.deleteCrime(crime)
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

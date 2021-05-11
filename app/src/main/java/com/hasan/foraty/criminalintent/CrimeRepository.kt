@@ -7,6 +7,9 @@ import com.hasan.foraty.criminalintent.database.CrimeDao
 import com.hasan.foraty.criminalintent.database.CrimeDatabase
 import com.hasan.foraty.criminalintent.database.migration_1_2
 import com.hasan.foraty.criminalintent.model.Crime
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 import java.util.concurrent.Executor
@@ -41,14 +44,15 @@ class CrimeRepository private constructor(context:Context){
     fun getCrimes():LiveData<List<Crime>> =crimeDao.getCrimes()
     fun getCrime(id:UUID):LiveData<Crime?> = crimeDao.getCrime(id)
     fun updateCrime(crime:Crime){
-        executors.execute {
+        CoroutineScope(IO).launch{
             crimeDao.updateCrime(crime)
         }
     }
     fun addCrime(crime: Crime){
-        executors.execute {
-                crimeDao.addCrime(crime)
+        CoroutineScope(IO).launch {
+            crimeDao.addCrime(crime)
         }
+
     }
     fun deleteCrime(crime: Crime){
         executors.execute {
