@@ -17,4 +17,13 @@
     <string name="send_report">Enviar el informe del crimen a través de</string>
     <string name="crime_detail_label">Detalles</string>
     <string name="send_report_button">Enviar el Informe del Crimen</string>
+    <string name="crime_photo_button_description">
+Tomar foto de la escena del crimen
+</string>
+    <string name="crime_photo_no_image_description">
+Foto de la escena del crimen (no establecida)
+</string>
+    <string name="crime_photo_image_description">
+Foto de la escena del crimen (establecida)
+</string>
 </resources>

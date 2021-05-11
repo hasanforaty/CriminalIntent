@@ -11,6 +11,7 @@ import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.core.app.ActivityCompat
@@ -160,15 +161,18 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
             callingSuspect()
         }
 
-        chooseSuspectButton.setOnClickListener {
-            val pickContactIntent=Intent(Intent.ACTION_PICK,ContactsContract.Contacts.CONTENT_URI).also {
-                startActivityForResult(it, REQUEST_CONTACT)
-            }.apply {
-                val packageManager=requireActivity().packageManager
-                val resolveActivity:ResolveInfo?=packageManager.resolveActivity(this,PackageManager.MATCH_DEFAULT_ONLY)
-                if (resolveActivity==null){
-                    it.isEnabled=false
-                }
+        chooseSuspectButton.apply {
+            val pickContactIntent=Intent(Intent.ACTION_PICK,ContactsContract.Contacts.CONTENT_URI)
+            val packageManager=requireActivity().packageManager
+//            Log.d("Tag","${packageManager.getInstalledApplications(0)}")
+            val resolveActivity:ResolveInfo?=packageManager.resolveActivity(pickContactIntent,PackageManager.MATCH_DEFAULT_ONLY)
+            if (resolveActivity==null){
+                Log.d("Tag","Resolved Activity =null ${pickContactIntent.toString()}")
+                this.isEnabled=false
+            }
+
+            setOnClickListener {
+                startActivityForResult(pickContactIntent, REQUEST_CONTACT)
             }
         }
 
@@ -179,6 +183,7 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
                     .resolveActivity(captureImage,PackageManager.MATCH_DEFAULT_ONLY)
             if (resolvedActivity==null){
                 isEnabled=false
+                crimePhoto.isEnabled=false
             }
             setOnClickListener {
                 captureImage.putExtra(MediaStore.EXTRA_OUTPUT,photoUri)
@@ -198,6 +203,7 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
             PictureDialogFragment().apply {
                 setTargetFragment(this@CrimeFragment, DIALOG_PICTURE)
             }.show(requireFragmentManager(), DIALOG_PICTURE.toString())
+
         }
     }
 
@@ -205,8 +211,10 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
         if (photoFile.exists()){
             val bitmap= getScaledBitmap(photoFile.path,crimePhoto.measuredWidth,crimePhoto.measuredHeight)
             crimePhoto.setImageBitmap(bitmap)
+            if (isAdded) crimePhoto.contentDescription=getString(R.string.crime_photo_image_description)
         }else{
-         crimePhoto.setImageDrawable(null)
+            crimePhoto.setImageDrawable(null)
+            if (isAdded) crimePhoto.contentDescription=getString(R.string.crime_photo_no_image_description)
         }
     }
 
@@ -269,9 +277,13 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data==null){
+            Log.d("Tag","data is null")
+        }
         when {
             resultCode!= Activity.RESULT_OK -> return
             requestCode== REQUEST_CONTACT && data!=null ->{
+                Log.d("Tag","reach result")
                 val contactURI: Uri? =data.data
                 val queryField= arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
                 val cursor= contactURI?.let {
@@ -281,12 +293,15 @@ class CrimeFragment: Fragment(),DatePickerFragment.Callbacks,TimePickerFragment.
 
                 cursor?.use {
                     if (it.count==0){
+                        Log.d("Tag","witout any result why ?")
                        return
                     }
                     it.moveToFirst()
                     val suspect=it.getString(0)
+                    Log.d("Tag","result is $suspect")
                     crime.suspect=suspect
                     crimeDetailViewModel.saveCrime(crime)
+                    Log.d("Tag","Reach end")
                     chooseSuspectButton.text=suspect
                 }
             }

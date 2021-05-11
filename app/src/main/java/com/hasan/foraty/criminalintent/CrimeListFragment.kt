@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.hasan.foraty.criminalintent.model.Crime
 import com.hasan.foraty.criminalintent.model.CrimeListViewModel
+import java.lang.StringBuilder
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -141,7 +143,7 @@ class CrimeListFragment : Fragment() {
                 View.VISIBLE
             else
                 View.GONE
-
+            itemView.contentDescription="${crime.title} date= ${crime.date} crime is ${if (crime.isSolved)"solved" else "unSolved"}"
         }
         override fun onClick(v:View){
             callbacks?.onCrimeSelected(crime.id)
